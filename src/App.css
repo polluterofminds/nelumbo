@@ -1,0 +1,46 @@
+@font-face {
+  font-family: 'Goldman';
+  src: url('./assets/fonts/Goldman-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('./assets/fonts/Roboto-Regular.ttf');
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+}
+
+.main {
+  background: #000;
+}
+
+.flex-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  text-align: center;
+}
+
+.logo {
+  width: 300px;
+}
+
+.btn {
+  height: 40px;
+  width: 100px;
+  border-radius: 0px;
+  border: none;
+  font-family: 'Goldman', sans-serif;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #026863;
+  color: #fff;
+}
