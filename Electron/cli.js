@@ -14,7 +14,8 @@ const checkOnDependencies = async (dependency) => {
 module.exports = {
   checkOnDependencies: async () => {
     try {
-      const [xcode, git, go, bzr, jq, pkgConfig, rustup, hwloc, lotus] = await Promise.allSettled([
+      const [brew, xcode, git, go, bzr, jq, pkgConfig, rustup, hwloc, lotus] = await Promise.allSettled([
+        checkOnDependencies('brew'),
         checkOnDependencies('xcode'),
         checkOnDependencies('git'),
         checkOnDependencies('go'),
@@ -25,7 +26,7 @@ module.exports = {
         checkOnDependencies('hwloc'),
         checkOnDependencies('lotus')
       ]);
-      const failedDependencies = [xcode, git, go, bzr, jq, pkgConfig, rustup, hwloc, lotus].filter((d) => d.status === 'rejected');
+      const failedDependencies = [brew, xcode, git, go, bzr, jq, pkgConfig, rustup, hwloc, lotus].filter((d) => d.status === 'rejected');
       return failedDependencies;
     } catch (error) {
       throw error;
