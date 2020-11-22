@@ -1,1 +1,2 @@
-export const TYPE = 'TYPE'
+export const LOTUS_VERSION = 'LOTUS_VERSION';
+export const MISSING_DEPENDENCIES = 'MISSING_DEPENDENCIES'

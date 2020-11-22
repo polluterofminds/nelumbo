@@ -44,3 +44,15 @@ h1, h2, h3, h4, h5, h6, p {
   background: #026863;
   color: #fff;
 }
+
+.floating-version {
+  position: fixed;
+  top: 15px;
+  right: 50px;
+} 
+
+.floating-version p {
+  font-family: 'Goldman', sans-serif;
+  font-size: 10px;
+  color: #fff;
+}
