@@ -1,11 +1,13 @@
 import createDataContext from "../context/createDataContext";
-import { setLotusVersion, setMissingDependencies } from '../actions/lotus';
-import { LOTUS_VERSION, MISSING_DEPENDENCIES } from "../actions/types";
+import { setLotusVersion, setMissingDependencies, setUpdateText, setStatus } from '../actions/lotus';
+import { LOTUS_VERSION, MISSING_DEPENDENCIES, LAUNCH_UPDATE, LOTUS_STATE } from "../actions/types";
 
 const initialState = {
   updateAvailable: false,
   missingDependencies: [],
-  lotusVersion: null
+  lotusVersion: null, 
+  launchUpdateText: null, 
+  lotusState: null
 };
 
 export const reducer = (state, action) => {
@@ -21,6 +23,16 @@ export const reducer = (state, action) => {
         ...state, 
         missingDependencies: action.payload
       }
+    case LAUNCH_UPDATE: 
+      return {
+        ...state, 
+        launchUpdateText: action.payload
+      }
+    case LOTUS_STATE: 
+      return {
+        ...state, 
+        lotusState: action.payload
+      }
     default:
       return state;
   }
@@ -30,7 +42,9 @@ export const { Context, Provider } = createDataContext(
   reducer,
   {
     setLotusVersion,
-    setMissingDependencies
+    setMissingDependencies,
+    setUpdateText, 
+    setStatus
   },
   initialState
 );

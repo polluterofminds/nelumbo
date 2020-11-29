@@ -5,15 +5,27 @@ import "./App.css";
 import { Provider, Context } from "./reducer/store";
 
 const App = () => {
-  const { state, setLotusVersion, setMissingDependencies } = useContext(Context);
-  console.log(state);
+  const { setLotusVersion, setMissingDependencies, setUpdateText, setStatus } = useContext(Context);
+
   useEffect(() => {
     window.ipcRenderer.on("electron-state", (event, message) => {
       const { lotusVersion, updateAvailable, missingDependencies } = JSON.parse(message);
       setLotusVersion(lotusVersion, updateAvailable);
       setMissingDependencies(missingDependencies);
     });
+    window.ipcRenderer.on("launch-updates", (event, message) => {
+      setUpdateText(message);    
+    })
   });
+
+  useEffect(() => {
+    window.ipcRenderer.send('Check lotus');
+    window.ipcRenderer.on('Lotus state', (event, message) => {
+      console.log(message)
+      setStatus(message)
+    })
+    // eslint-disable-next-line
+  }, []);
   return (
       <BrowserRouter>
         <div className="main">
@@ -23,10 +35,12 @@ const App = () => {
   );
 };
 
-export default () => {
+const app = () => {
   return (
     <Provider>
       <App />
     </Provider>
   );
-};
+}
+
+export default app;
