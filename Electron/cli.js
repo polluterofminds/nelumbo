@@ -57,7 +57,7 @@ const install = async () => {
 const installBrew = async () => {
   return new Promise(async (resolve, reject) => {
     try {
-      sudo.exec(`cd ~/ && mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew`, options, (error, stdout, stderr) => {
+      sudo.exec(`cd /usr/ && mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew`, options, (error, stdout, stderr) => {
           if (error) {
             reject(error);
           }
