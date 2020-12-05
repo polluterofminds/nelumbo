@@ -57,8 +57,7 @@ const install = async () => {
 const installBrew = async () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const zshInstalled = await checkShell();
-      sudo.exec(`${zshInstalled ? "zsh" : "bash"} -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`, options, (error, stdout, stderr) => {
+      sudo.exec(`cd ~/ && mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew`, options, (error, stdout, stderr) => {
           if (error) {
             reject(error);
           }
