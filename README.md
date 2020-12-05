@@ -8,6 +8,10 @@ Nelumbo is under active development. Contributions are welcome. Please open issu
 
 The current state is such that you can run the app and it will start a running local devnet. There is not much UI built out around it yet, but there are status updates displayed in-app. 
 
+## Requirements  
+
+While Nelumbo tries to abstract away all of the dependency installation requirements, there is one dependency that is required. Users will need to install [Homebrew](https://brew.sh).
+
 ##  Who is behind this project  
 
 Justin Hunter (known on the web as [polluterofminds](https://polluterofminds.com)) is building this. He has been working on Filecoin storage client development since the early days of Testnet. This project solves a big problem for him, and it will surely solve a big problem for you if you're building storage client apps. 
