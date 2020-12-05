@@ -125,5 +125,18 @@ ipcMain.on('Check lotus', async (event, message) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+ipcMain.on('Check dependencies', async (even, message) => {
+  try {
+    const missingDependencies = await checkOnDependencies();
+    electronState.missingDependencies = missingDependencies;
+    mainWindow.webContents.send(
+      "electron-state",
+      JSON.stringify(electronState)
+    );
+  } catch (error) {
+    console.log(error);
+  }
 })
 app.on("ready", createWindow);

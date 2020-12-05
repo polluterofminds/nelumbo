@@ -10,6 +10,7 @@ const App = () => {
   useEffect(() => {
     window.ipcRenderer.on("electron-state", (event, message) => {
       const { lotusVersion, updateAvailable, missingDependencies } = JSON.parse(message);
+      console.log(missingDependencies);
       setLotusVersion(lotusVersion, updateAvailable);
       setMissingDependencies(missingDependencies);
     });

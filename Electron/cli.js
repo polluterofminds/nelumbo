@@ -54,22 +54,6 @@ const install = async () => {
   })
 }
 
-const installBrew = async () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      sudo.exec(`cd /usr/ && mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew`, options, (error, stdout, stderr) => {
-          if (error) {
-            reject(error);
-          }
-          resolve();
-        }
-      );
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
 const checkOnDependencies = async (dependency) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -225,10 +209,6 @@ module.exports = {
       try {
         for (const dep of dependencies) {
           switch (dep.reason) {
-            case "brew":
-              console.log("Installing brew");
-              await installBrew();
-              break;
             case "xcode":
               console.log("Installing xcode tools");
               execSync("xcode-select --install");

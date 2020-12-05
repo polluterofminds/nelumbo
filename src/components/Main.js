@@ -7,14 +7,22 @@ const Main = () => {
   const { state } = useContext(Context);
   const [launching, setLaunching] = useState(false);
   const [running, setRunning] = useState(false);
-  const { lotusVersion, launchUpdateText, lotusState } = state;
+  const [allowStart, setAllowStart] = useState(true);
+  const { lotusVersion, launchUpdateText, lotusState, missingDependencies } = state;
 
+  useEffect(() => {
+    console.log(missingDependencies)
+    const brewMissing = missingDependencies.filter((dep) => dep.reason === "brew").length > 0;
+    if(brewMissing) {
+      setAllowStart(false);
+    }
+  }, [missingDependencies]);
   useEffect(() => {
     if(launchUpdateText === 'Done') {
       setLaunching(false);
       setRunning(true);
     } 
-  }, [launchUpdateText])
+  }, [launchUpdateText]);
   const handleLaunch = () => {
     try {
       setLaunching(true);
@@ -28,7 +36,19 @@ const Main = () => {
     window.ipcRenderer.send("re-launch");
   }
 
-  if(lotusState) {
+  const checkDependencies = () => {
+    window.ipcRenderer.send('Check dependencies');
+  }
+
+  if(allowStart === false) {
+    return (
+      <div className='flex-container'>
+        <h1>Homebrew is required to run Nelumbo</h1>
+        <p>You can install it <a href='https://brew.sh/'>here</a>. Once it's installed, click the button below.</p>
+        <button className='btn btn-primary' onClick={checkDependencies}>Get Started</button>
+      </div>
+    )
+  } else if(lotusState) {
     return (
       <Lotus />
     )
@@ -41,7 +61,7 @@ const Main = () => {
             <h1>{launchUpdateText}</h1> 
             { 
               launchUpdateText === 'Error' &&  
-              <button onClick={restartNode}>Try Again</button>
+              <button className='btn btn-primary' onClick={restartNode}>Try Again</button>
             }
           </div>
           : 
