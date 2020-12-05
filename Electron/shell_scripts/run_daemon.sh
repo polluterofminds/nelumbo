@@ -1,0 +1,1 @@
+cd ~/lotus && ./lotus daemon --lotus-make-genesis=devgen.car --genesis-template=localnet.json --bootstrap=false

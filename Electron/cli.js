@@ -1,6 +1,10 @@
 const { execSync, exec } = require("child_process");
 const axios = require("axios");
 const semver = require("semver");
+const sudo = require('sudo-prompt');
+const options = {
+  name: 'Nelumbo'
+};
 
 const clean = async () => {
   return new Promise((resolve, reject) => {
@@ -50,6 +54,22 @@ const install = async () => {
   })
 }
 
+const installBrew = async () => {
+  return new Promise((resolve, reject) => {
+    try {
+      sudo.exec('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"', options, (error, stdout, stderr) => {
+          if (error) {
+            reject(error);
+          }
+          resolve();
+        }
+      );
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
 const checkOnDependencies = async (dependency) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -82,38 +102,14 @@ const checkOnDependencies = async (dependency) => {
   });
 };
 
-const exportPaths = async () => {
+const checkShell = async () => {
   return new Promise((resolve, reject) => {
     try {
-      exec('rm -rf ~/.lotus && rm -rf ~/.lotusminer', (err) => {
+      exec('which zsh', (err) => {
         if(err) {
-          reject(err);
+          resolve(false)
         } else {
-          exec('export CGO_CFLAGS_ALLOW="-D__BLST_PORTABLE__"', (err, stdout, stderr) => {
-            if(err) {
-              reject(err);
-            } else {
-              exec('export CGO_CFLAGS="-D__BLST_PORTABLE__"', (err, stdout, stderr) => {
-                if(err) {
-                  reject(err);
-                } else {
-                  exec('export LOTUS_PATH=~/.lotusDevnet', (err, stdout, stderr) => {
-                    if(err) {
-                      reject(err);
-                    } else {
-                      exec('export LOTUS_MINER_PATH=~/.lotusminerDevnet', (err, stdout, stderr) => {
-                        if(err) {
-                          reject(err);
-                        } else {
-                          resolve();
-                        }
-                      })
-                    }
-                  })
-                }
-              })
-            }
-          });
+          resolve(true);
         }
       })
     } catch (error) {
@@ -122,170 +118,32 @@ const exportPaths = async () => {
   })
 }
 
-const make2k = async () => {
+const prepDevnet = async (script) => {
   return new Promise((resolve, reject) => {
     try {
-      exec("cd ~/lotus && make 2k", (err, stdout, stderr) => {
+      exec(script, (err, stdout, stderr) => {
         if(err) {
           reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const exportEnv = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('export LOTUS_SKIP_GENESIS_CHECK=_yes_', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const fetchParams = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('cd ~/lotus && ./lotus fetch-params 2048', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const preSeal = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('cd ~/lotus && ./lotus-seed pre-seal --sector-size 2KiB --num-sectors 2', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const localNet = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('cd ~/lotus && ./lotus-seed genesis new localnet.json', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const addMiner = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('cd ~/lotus && ./lotus-seed genesis add-miner localnet.json ~/.genesis-sectors/pre-seal-t01000.json', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const createGenesis = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('cd ~/lotus && ./lotus daemon --lotus-make-genesis=devgen.car --genesis-template=localnet.json --bootstrap=false', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } 
+        }        
+        resolve();
       });
-      //  Giving the chain some time to start up
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
+const startDaemon = async (script) => {
+  return new Promise((resolve, reject) => {
+    try {
+      exec(script, (err, stdout, stderr) => {
+        if(err) {
+          reject(err);
+        }       
+      });
       setTimeout(() => {
         resolve();
-      }, 2500)
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
-const importWallet = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('cd ~/lotus && ./lotus wallet import --as-default ~/.genesis-sectors/pre-seal-t01000.key', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const initMiner = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('rm -rf ~/.lotusminer', (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {          
-          exec('cd ~/lotus && ./lotus-miner init --genesis-miner --actor=t01000 --sector-size=2KiB --pre-sealed-sectors=~/.genesis-sectors --pre-sealed-metadata=~/.genesis-sectors/pre-seal-t01000.json --nosync', {maxBuffer: 1024 * 500}, (err, stdout, stderr) => {
-            if(err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          })
-        }
-      })      
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const startMiner = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec('cd ~/lotus && ./lotus-miner run --nosync', (err) => {
-        if(err) {
-          reject(err);
-        }
-      });
-      //  Giving some time for the miner to start
-      setTimeout(() => {
-        resolve();
-      }, 2500)
+      }, 3000) 
     } catch (error) {
       reject(error);
     }
@@ -369,7 +227,8 @@ module.exports = {
           switch (dep.reason) {
             case "brew":
               console.log("Installing brew");
-              execSync(
+              await installBrew();
+              sudo.execSync(
                 '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
               );
               break;
@@ -421,45 +280,40 @@ module.exports = {
     });
   },
   startWorkers: async () => {
-    try {
-      console.log("Exporting paths...");
-      await exportPaths();
-      console.log("Making 2k sectors...");
-      await make2k();
-      console.log("Exporting ENV...");
-      await exportEnv();
-      console.log("Fetching params...");
-      await fetchParams();        
-      console.log("Setting up sectors...");
-      await preSeal();    
-      console.log("Creating local net...");
-      await localNet();
-      console.log("Adding miner...");
-      await addMiner();
-      console.log("Creating genesis block...");
-      await createGenesis();
-      return;
-    } catch (error) {
-      throw error;
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const zshAvailable = await checkShell();
+        const shellToUse = zshAvailable ? 'zsh' : 'bash';        
+        await prepDevnet(`${shellToUse} ./Electron/shell_scripts/prep_devnet_new.sh`);
+        await startDaemon(`${shellToUse} ./Electron/shell_scripts/run_daemon.sh`)
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
   },
   startMiner: async () => {
-    try {
-      console.log("Importing miner...");
-      await importWallet();
-      console.log("Initializing miner...");
-      await initMiner();
-      console.log("Starting miner...");
-      await startMiner();
-      return;
-    } catch (error) {
-      throw error;
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const zshAvailable = await checkShell();
+        const script = zshAvailable ? 'zsh ./Electron/shell_scripts/devnet_miner.sh' : 'bash ./Electron/shell_scripts/devnet_miner.sh';
+        exec(script, (err) => {
+          if(err) {
+            reject(err);
+          }
+        });
+        setTimeout(() => {
+          resolve();
+        }, 3000) 
+      } catch (error) {
+        reject(error);
+      }
+    })
   },
   stopLotus: async () => {
     return new Promise((resolve, reject) => {
       try {
-        exec('lotus daemon stop', (err) => {
+        exec('lotus daemon stop && lotus-miner stop', (err) => {
           if(err) {
             reject(err);
           } else {
