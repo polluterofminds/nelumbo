@@ -228,9 +228,6 @@ module.exports = {
             case "brew":
               console.log("Installing brew");
               await installBrew();
-              sudo.execSync(
-                '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-              );
               break;
             case "xcode":
               console.log("Installing xcode tools");
