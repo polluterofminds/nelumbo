@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
 const {
@@ -8,7 +8,9 @@ const {
   installDependencies,
   startWorkers,
   startMiner, 
-  checkLotusState
+  checkLotusState, 
+  upgradeLotus, 
+  stopLotus
 } = require("./cli");
 const isOnline = require("is-online");
 
@@ -19,10 +21,10 @@ try {
   require("electron-reloader")(module);
 } catch (_) {}
 
-const startLotus = async () => {
+const startLotus = async (existingRepo) => {
   try {
     mainWindow.webContents.send("launch-updates", "Starting workers...");
-    await startWorkers();
+    await startWorkers(existingRepo);
     mainWindow.webContents.send("launch-updates", "Starting miner...");
     await startMiner();
     mainWindow.webContents.send("launch-updates", "Done");
@@ -80,8 +82,9 @@ const createWindow = () => {
       JSON.stringify(electronState)
     );
   });
-  mainWindow.on("closed", () => {
-    mainWindow = null;
+  mainWindow.on("closed", async () => {
+    await stopLotus();
+    mainWindow = null;    
   });
 };
 
@@ -100,7 +103,9 @@ ipcMain.on("launch", async (event, message) => {
         mainWindow.webContents.send("launch-updates", "Error while launching");
       }
     }
-    await startLotus();
+
+    const existingLotusRepo = missingDependencies.filter((dep) => dep.reason === 'lotus').length === 0
+    await startLotus(existingLotusRepo);
   } catch (error) {
     console.log(error);
     mainWindow.webContents.send("launch-updates", "Error");
@@ -134,7 +139,7 @@ ipcMain.on('Check lotus', async (event, message) => {
   }
 });
 
-ipcMain.on('Check dependencies', async (even, message) => {
+ipcMain.on('Check dependencies', async (event, message) => {
   try {
     const missingDependencies = await checkOnDependencies();
     electronState.missingDependencies = missingDependencies;
@@ -145,5 +150,19 @@ ipcMain.on('Check dependencies', async (even, message) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+ipcMain.on('Upgrade lotus', async (event, message) => {
+  try {
+    await upgradeLotus();
+    mainWindow.webContents.send("Upgrade complete");
+  } catch (error) {
+    console.log(error);
+    mainWindow.webContents.send("launch-updates", "Error");
+  }
+});
+
+ipcMain.on('Open link', async (event, message) => {
+  shell.openExternal(message);
 })
 app.on("ready", createWindow);

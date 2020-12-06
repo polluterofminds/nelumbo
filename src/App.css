@@ -57,3 +57,24 @@ h1, h2, h3, h4, h5, h6, p {
   font-size: 10px;
   color: #fff;
 }
+
+.no-btn, .no-btn:hover, .no-btn:focus, .no-btn:focus {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.update-available {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1024;
+}
+
+.no-btn h3 {
+  font-family: 'Goldman', sans-serif!important;
+}
+
+.no-btn:hover h3 {
+  color: #026863;
+}

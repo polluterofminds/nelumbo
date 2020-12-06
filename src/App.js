@@ -10,24 +10,24 @@ const App = () => {
   useEffect(() => {
     window.ipcRenderer.on("electron-state", (event, message) => {
       const { lotusVersion, updateAvailable, missingDependencies } = JSON.parse(message);
-      console.log(missingDependencies);
       setLotusVersion(lotusVersion, updateAvailable);
       setMissingDependencies(missingDependencies);
     });
+    
     window.ipcRenderer.on("launch-updates", (event, message) => {
       setUpdateText(message);    
-    })
+    });
   });
 
   useEffect(() => {
     window.ipcRenderer.send('Check lotus');
     window.ipcRenderer.on('Lotus state', (event, message) => {
-      console.log(message)
       setStatus(message)
     });
     window.ipcRenderer.send('Get state');
     // eslint-disable-next-line
   }, []);
+
   return (
       <BrowserRouter>
         <div className="main">

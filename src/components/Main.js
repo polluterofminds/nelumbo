@@ -8,10 +8,15 @@ const Main = () => {
   const [launching, setLaunching] = useState(false);
   const [running, setRunning] = useState(false);
   const [allowStart, setAllowStart] = useState(true);
+  const [upgrading, setUpgrading] = useState(false);
   const { lotusVersion, launchUpdateText, lotusState, missingDependencies } = state;
 
   useEffect(() => {
-    console.log(missingDependencies)
+    window.ipcRenderer.on('Upgrade complete', (event, message) => {
+      setUpgrading(false)
+    });
+  })
+  useEffect(() => {
     const brewMissing = missingDependencies.filter((dep) => dep.reason === "brew").length > 0;
     if(brewMissing) {
       setAllowStart(false);
@@ -23,6 +28,20 @@ const Main = () => {
       setRunning(true);
     } 
   }, [launchUpdateText]);
+
+  const handleUpgrade = () => {
+    window.ipcRenderer.send('Upgrade lotus');
+    setUpgrading(true);
+  }
+
+  const LotusUpgradeAvailable = () => {
+    return (
+      <div className='update-available'>
+        <button onClick={handleUpgrade} className='no-btn'><h3>Update Available</h3></button>      
+      </div>
+    )
+  }
+
   const handleLaunch = () => {
     try {
       setLaunching(true);
@@ -40,12 +59,22 @@ const Main = () => {
     window.ipcRenderer.send('Check dependencies');
   }
 
+  const openBrew = () => {
+    window.ipcRenderer.send('Open link', "https://brew.sh")
+  }
+
   if(allowStart === false) {
     return (
       <div className='flex-container'>
         <h1>Homebrew is required to run Nelumbo</h1>
-        <p>You can install it <a href='https://brew.sh/'>here</a>. Once it's installed, click the button below.</p>
+        <p>You can install it <a style={{ textDecoration: 'underline', cursor: 'pointer'}} onClick={openBrew}>here</a>. Once it's installed, click the button below.</p>
         <button className='btn btn-primary' onClick={checkDependencies}>Get Started</button>
+      </div>
+    )
+  } else if(upgrading) {
+    return (
+      <div className='flex-container'>
+        <h1>Upgrading Lotus Version...</h1>
       </div>
     )
   } else if(lotusState) {
@@ -70,6 +99,9 @@ const Main = () => {
             <h1>Your lotus node is now running!</h1>
           </div> :
           <div>
+            { 
+              state.updateAvailable && <LotusUpgradeAvailable />
+            }
             <div className='floating-version'>
               <p>{lotusVersion && `Lotus Version: ${lotusVersion}`}</p>
             </div>

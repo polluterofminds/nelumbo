@@ -1,58 +1,11 @@
 const { execSync, exec } = require("child_process");
 const axios = require("axios");
 const semver = require("semver");
-const sudo = require('sudo-prompt');
-const options = {
-  name: 'Nelumbo'
-};
-
-const clean = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec(`cd ~/lotus && make clean`, (err, stdout, stderr) => {
-        if(err) {
-          reject(err)
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const make = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec("cd ~/lotus && make all", (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
-
-const install = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      exec("cd ~/lotus && make install", (err, stdout, stderr) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    } catch (error) {
-      reject(error);
-    }
-  })
-}
+//  When we need sudo access, the below will create a native macOS prompt
+// const sudo = require('sudo-prompt');
+// const options = {
+//   name: 'Nelumbo'
+// };
 
 const checkOnDependencies = async (dependency) => {
   return new Promise(async (resolve, reject) => {
@@ -131,6 +84,20 @@ const startDaemon = async (script) => {
     } catch (error) {
       reject(error);
     }
+  })
+}
+
+stopMiner = async () => {
+  return new Promise((resolve) => {
+    exec('lotus-miner stop');
+    resolve();
+  })
+}
+
+stopDaemon = async () => {
+  return new Promise((resolve) => {
+    exec('lotus daemon stop')
+    resolve();
   })
 }
 
@@ -214,19 +181,7 @@ module.exports = {
               execSync("xcode-select --install");
               break;
             case "lotus":
-              console.log("Installing lotus");
-              execSync("rm -rf ~/lotus");
-              console.log("Chainging directory and cloning...");
-              execSync(
-                "cd ~/ && git clone https://github.com/filecoin-project/lotus.git"
-              );
-              console.log("Switching into lotus directory & installing...");
-              console.log("Cleaning...");
-              await clean();
-              console.log("Making...");
-              await make();
-              console.log("installing...");
-              await install();
+              console.log("Lotus will be installed later...")
               break;
             case "cargo":
               try {
@@ -256,12 +211,14 @@ module.exports = {
       }
     });
   },
-  startWorkers: async () => {
+  startWorkers: async (existingRepo) => {
+    console.log("Does Lotus Repo Exist?");
+    console.log(existingRepo);
     return new Promise(async (resolve, reject) => {
       try {
         const zshAvailable = await checkShell();
-        const shellToUse = zshAvailable ? 'zsh' : 'bash';        
-        await prepDevnet(`${shellToUse} ./Electron/shell_scripts/prep_devnet_new.sh`);
+        const shellToUse = zshAvailable ? 'zsh' : 'bash';      
+        await prepDevnet(`${shellToUse} ./Electron/shell_scripts/${existingRepo ? "prep_devnet_existing.sh" : "prep_devnet_new.sh"}`);
         await startDaemon(`${shellToUse} ./Electron/shell_scripts/run_daemon.sh`)
         resolve();
       } catch (error) {
@@ -316,5 +273,26 @@ module.exports = {
         resolve(false)
       }
     })
+  }, 
+  upgradeLotus: async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const zshAvailable = await checkShell();
+        const script = zshAvailable ? 'zsh ./Electron/shell_scripts/upgrade_lotus.sh' : 'bash ./Electron/shell_scripts/upgrade_lotus.sh';
+        exec(script, (err) => {
+          if(err) {
+            reject(err)
+          }
+          resolve();
+        })
+      } catch (error) {
+        reject(error);
+      }
+    })
+  }, 
+  stopLotus: async () => {
+    await stopMiner();
+    await stopDaemon();
+    return;
   }
 };
