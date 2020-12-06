@@ -19,7 +19,7 @@ While Nelumbo tries to abstract away all of the dependency installation requirem
 
 ##  Who is behind this project  
 
-Justin Hunter (known on the web as [polluterofminds](https://polluterofminds.com)) is building this. He has been working on Filecoin storage client development since the early days of Testnet. This project solves a big problem for him, and it will surely solve a big problem for you if you're building storage client apps. 
+Justin Hunter ([polluterofminds](https://polluterofminds.com)) is building this. He has been working on Filecoin storage client development since the early days of Testnet. This project solves a big problem for him, and it will surely solve a big problem for you if you're building storage client apps. 
 
 ##  Run it locally
 
