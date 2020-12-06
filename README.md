@@ -6,7 +6,12 @@ Nelumbo is a one-click, development blockchain for Filecoin that you can run on 
 
 Nelumbo is under active development. Contributions are welcome. Please open issues, create pull requests, and reach out if you have questions. 
 
-The current state is such that you can run the app and it will start a running local devnet. There is not much UI built out around it yet, but there are status updates displayed in-app. 
+The current state includes the following: 
+
+* UI that prompts Homebrew install  
+* UI to install and run Lotus  
+* UI to indicate Lotus is running  
+* UI to allow Lotus upgrades
 
 ## Requirements  
 
