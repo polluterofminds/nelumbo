@@ -118,6 +118,13 @@ ipcMain.on('re-launch', async (event, message) => {
   }
 });
 
+ipcMain.on('Get state', async (event, message) => {
+  mainWindow.webContents.send(
+    "electron-state",
+    JSON.stringify(electronState)
+  );
+})
+
 ipcMain.on('Check lotus', async (event, message) => {
   try {
     const state = await checkLotusState();

@@ -24,7 +24,8 @@ const App = () => {
     window.ipcRenderer.on('Lotus state', (event, message) => {
       console.log(message)
       setStatus(message)
-    })
+    });
+    window.ipcRenderer.send('Get state');
     // eslint-disable-next-line
   }, []);
   return (
