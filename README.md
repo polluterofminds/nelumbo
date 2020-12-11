@@ -23,8 +23,9 @@ Justin Hunter ([polluterofminds](https://polluterofminds.com)) is building this.
 
 ##  Run it locally
 
-1. Clone the repo - `git clone https://github.com/jehunter5811/nelumbo`  
-2. Change into directory - `cd nelumbo`  
-3. Install dependencies - `npm install`  
+1. Clone the repo - `git clone https://github.com/polluterofminds
+2. /nelumbo`  
+3. Change into directory - `cd nelumbo`  
+4. Install dependencies - `npm install`  
 4. Run - `npm run dev`  
 
