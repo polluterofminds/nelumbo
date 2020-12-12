@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import Logo from '../assets/img/logo_transparent.png';
 import Lotus from './Lotus';
 import { Context } from '../reducer/store';
+import { getLotusToken } from '../actions/lotus';
 
 const Main = () => {
   const { state } = useContext(Context);
@@ -26,6 +27,7 @@ const Main = () => {
     if(launchUpdateText === 'Done') {
       setLaunching(false);
       setRunning(true);
+      getLotusToken();
     } 
   }, [launchUpdateText]);
 
@@ -45,7 +47,6 @@ const Main = () => {
   const handleLaunch = () => {
     try {
       setLaunching(true);
-      console.log(window.ipcRenderer);
       window.ipcRenderer.send("launch");
     } catch (error) {
       setLaunching(false);

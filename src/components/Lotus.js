@@ -8,7 +8,7 @@ const Lotus = () => {
   const [page, setPage] = useState("Wallets");
 
   useEffect(() => {
-    getLotusToken();   
+    // getLotusToken();   
   }, []);
 
   const renderPage = () => {

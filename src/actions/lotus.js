@@ -37,7 +37,7 @@ export const setStatus = (dispatch) => {
 }
 
 export const getLotusToken = () => {
-  window.ipcRenderer.sendSync("get-token");    
+  window.ipcRenderer.send("get-token");    
 }
 
 export const setLotusToken = (dispatch) => {

@@ -270,8 +270,8 @@ class LotusClient {
             });
             const config = this.config;
             config.data = data;
-
             const res = await postToLotus(config);
+            return res.data;
         } catch (e) {
             throw new Error(e);
         }

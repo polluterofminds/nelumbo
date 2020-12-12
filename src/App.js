@@ -21,7 +21,6 @@ const App = () => {
   useEffect(() => {
     window.ipcRenderer.send('Check lotus');
     window.ipcRenderer.on('Lotus state', (event, message) => {
-      console.log(message);
       setStatus(message)
     });
     window.ipcRenderer.send('Get state');
@@ -38,7 +37,6 @@ const App = () => {
 };
 
 const app = () => {
-  console.log("WHAT")
   return (
     <Provider>
       <App />

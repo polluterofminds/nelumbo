@@ -297,7 +297,7 @@ module.exports = {
   }, 
   getLotusToken: async () => {
     return new Promise((resolve, reject) => {
-      exec('cat ~/.lotus/token', (err, stder, stdout) => {
+      exec('cat ~/.lotus/token', (err, stdout, stderr) => {
         if(err) {
           reject(err);
         }

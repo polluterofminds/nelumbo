@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Context } from '../../reducer/store';
 import WalletList from './WalletList';
 import { getWallets } from '../../actions/wallets';
+import { getLotusToken } from '../../actions/lotus';
 
 const Wallets = () => {
   const { state, setLotusToken } = useContext(Context);
@@ -10,6 +11,7 @@ const Wallets = () => {
 
   useEffect(() => {
     window.ipcRenderer.on("received-token", (event, message) => {
+
       setLotusToken(message);    
     });
   })
@@ -18,10 +20,12 @@ const Wallets = () => {
     if(lotusToken) {
       fetchWallets();
     }    
-  }, [wallets, lotusToken]);
+    getLotusToken();
+  }, [lotusToken]);
 
   const fetchWallets = async () => {
-    const walletsToShow = getWallets();
+    const walletsToShow = await getWallets(lotusToken);
+    setWallets(walletsToShow);
   }
   return (
     <div className="flex-container">

@@ -164,11 +164,17 @@ ipcMain.on('Upgrade lotus', async (event, message) => {
 });
 
 ipcMain.on("get-token", async (event, message) => {
-  const token = await getLotusToken();
-  mainWindow.webContents.send(
-    "received-token",
-    token
-  );
+  try {
+    console.log("getting the token")
+    const token = await getLotusToken();
+    console.log(token);
+    mainWindow.webContents.send(
+      "received-token",
+      token
+    ); 
+  } catch (error) {
+    console.log(error);
+  }
 })
 
 ipcMain.on('Open link', async (event, message) => {
