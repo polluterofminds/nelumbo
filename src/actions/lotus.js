@@ -1,4 +1,4 @@
-import { LOTUS_VERSION, MISSING_DEPENDENCIES, LAUNCH_UPDATE, LOTUS_STATE } from './types';
+import { LOTUS_VERSION, MISSING_DEPENDENCIES, LAUNCH_UPDATE, LOTUS_STATE, LOTUS_TOKEN } from './types';
 
 export const setLotusVersion = (dispatch) => {
   return (lotusVersion, updateAvailable) => {
@@ -32,6 +32,19 @@ export const setStatus = (dispatch) => {
     dispatch({
       type: LOTUS_STATE, 
       payload: status
+    })
+  }
+}
+
+export const getLotusToken = () => {
+  window.ipcRenderer.sendSync("get-token");    
+}
+
+export const setLotusToken = (dispatch) => {
+  return (token) => {
+    dispatch({
+      type: LOTUS_TOKEN, 
+      payload: token
     })
   }
 }

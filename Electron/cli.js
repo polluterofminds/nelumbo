@@ -294,5 +294,15 @@ module.exports = {
     await stopMiner();
     await stopDaemon();
     return;
+  }, 
+  getLotusToken: async () => {
+    return new Promise((resolve, reject) => {
+      exec('cat ~/.lotus/token', (err, stder, stdout) => {
+        if(err) {
+          reject(err);
+        }
+        resolve(stdout);
+      })
+    })
   }
 };

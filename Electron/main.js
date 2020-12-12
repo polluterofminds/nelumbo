@@ -10,7 +10,8 @@ const {
   startMiner, 
   checkLotusState, 
   upgradeLotus, 
-  stopLotus
+  stopLotus, 
+  getLotusToken
 } = require("./cli");
 const isOnline = require("is-online");
 
@@ -161,6 +162,14 @@ ipcMain.on('Upgrade lotus', async (event, message) => {
     mainWindow.webContents.send("launch-updates", "Error");
   }
 });
+
+ipcMain.on("get-token", async (event, message) => {
+  const token = await getLotusToken();
+  mainWindow.webContents.send(
+    "received-token",
+    token
+  );
+})
 
 ipcMain.on('Open link', async (event, message) => {
   shell.openExternal(message);

@@ -95,9 +95,7 @@ const Main = () => {
           </div>
           : 
           running ? 
-          <div>
-            <h1>Your lotus node is now running!</h1>
-          </div> :
+          <Lotus /> :
           <div>
             { 
               state.updateAvailable && <LotusUpgradeAvailable />

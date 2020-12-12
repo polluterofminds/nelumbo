@@ -5,8 +5,7 @@ import "./App.css";
 import { Provider, Context } from "./reducer/store";
 
 const App = () => {
-  const { setLotusVersion, setMissingDependencies, setUpdateText, setStatus } = useContext(Context);
-
+  const { setLotusVersion, setMissingDependencies, setUpdateText, setStatus, state } = useContext(Context);
   useEffect(() => {
     window.ipcRenderer.on("electron-state", (event, message) => {
       const { lotusVersion, updateAvailable, missingDependencies } = JSON.parse(message);
@@ -22,6 +21,7 @@ const App = () => {
   useEffect(() => {
     window.ipcRenderer.send('Check lotus');
     window.ipcRenderer.on('Lotus state', (event, message) => {
+      console.log(message);
       setStatus(message)
     });
     window.ipcRenderer.send('Get state');
@@ -38,6 +38,7 @@ const App = () => {
 };
 
 const app = () => {
+  console.log("WHAT")
   return (
     <Provider>
       <App />
