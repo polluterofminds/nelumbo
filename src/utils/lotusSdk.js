@@ -260,6 +260,23 @@ class LotusClient {
         }
     };
 
+    newWallet = async () => {
+        try {
+            const data = JSON.stringify({
+                jsonrpc: "2.0",
+                method: "Filecoin.WalletNew",
+                params: ["bls"],
+                id: 3,
+            });
+            const config = this.config;
+            config.data = data;
+            const res = await postToLotus(config);
+            return res.data;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     walletBalance = async (walletAddress) => {
         try {
             const data = JSON.stringify({

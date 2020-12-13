@@ -87,17 +87,39 @@ const startDaemon = async (script) => {
   })
 }
 
-stopMiner = async () => {
+const stopMiner = async () => {
   return new Promise((resolve) => {
     exec('lotus-miner stop');
     resolve();
   })
 }
 
-stopDaemon = async () => {
+const stopDaemon = async () => {
   return new Promise((resolve) => {
     exec('lotus daemon stop')
     resolve();
+  })
+}
+
+const createWallet = () => {
+  return new Promise((resolve, reject) => {
+    exec("lotus wallet new", (err, stdout) => {
+      if(err) {
+        reject(err);
+      }
+      resolve(stdout);
+    })
+  })
+}
+
+const fundWallet = (wallet) => {
+  return new Promise((resolve, reject) => {
+    exec(`lotus send ${wallet.replace(/(\r\n|\n|\r)/gm, "")} 4999999`, (err) => {
+      if(err) {
+        reject(err);
+      }
+      resolve();
+    })
   })
 }
 
@@ -212,8 +234,6 @@ module.exports = {
     });
   },
   startWorkers: async (existingRepo) => {
-    console.log("Does Lotus Repo Exist?");
-    console.log(existingRepo);
     return new Promise(async (resolve, reject) => {
       try {
         const zshAvailable = await checkShell();
@@ -304,5 +324,25 @@ module.exports = {
         resolve(stdout);
       })
     })
+  },
+  createWallets: async () => {
+    try {
+      let wallets = 0;
+      let walletList = []
+      while(wallets < 9) {
+        wallets++;
+        const wallet = await createWallet();
+        if(wallet.length > 0) {
+          walletList.push(wallet);
+        }
+      }
+
+      for(const w of walletList) {
+        await fundWallet(w);
+      }
+      return;
+    } catch (error) {
+      throw error;
+    }
   }
 };

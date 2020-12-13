@@ -5,7 +5,7 @@ const WalletList = ({ wallets }) => {
   return (
     <div>
       {
-        wallets.map(wallet => {
+        wallets.sort((a, b) => (a.balance > b.balance) ? 1 : -1).map(wallet => {
           return (
             <WalletRow wallet={wallet} />
           )

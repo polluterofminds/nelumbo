@@ -2,30 +2,34 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Context } from '../reducer/store';
 import Wallets from './Wallets/';
 import Explorer from './Explorer/';
+import Navigation from './Navigation';
 import { getLotusToken } from '../actions/lotus';
 
 const Lotus = () => {
-  const [page, setPage] = useState("Wallets");
-
-  useEffect(() => {
-    // getLotusToken();   
-  }, []);
+  const [page, setPage] = useState("wallets");
 
   const renderPage = () => {
     switch(page) {
-      case "Wallets": 
+      case "wallets": 
         return <Wallets />;
-      case "Explorer": 
+      case "explorer": 
         return <Explorer />;
       default: 
         return <Wallets />;
     }
   }
   return (
-    <div>
+    <div style={styles.main}>
+      <Navigation setPage={setPage} page={page} />
       {renderPage()}
     </div>
   )
+}
+
+const styles = {
+  main: {
+    marginBottom: 50
+  }
 }
 
 export default Lotus

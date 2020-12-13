@@ -11,7 +11,8 @@ const {
   checkLotusState, 
   upgradeLotus, 
   stopLotus, 
-  getLotusToken
+  getLotusToken,
+  createWallets
 } = require("./cli");
 const isOnline = require("is-online");
 
@@ -28,6 +29,8 @@ const startLotus = async (existingRepo) => {
     await startWorkers(existingRepo);
     mainWindow.webContents.send("launch-updates", "Starting miner...");
     await startMiner();
+    mainWindow.webContents.send("launch-updates", "Creating wallets...");
+    await createWallets();
     mainWindow.webContents.send("launch-updates", "Done");
   } catch (error) {
     throw error;
@@ -36,7 +39,7 @@ const startLotus = async (existingRepo) => {
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1000,
     height: 700,
     show: false,
     webPreferences: {
