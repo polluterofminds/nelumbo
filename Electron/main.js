@@ -15,6 +15,7 @@ const {
   createWallets
 } = require("./cli");
 const isOnline = require("is-online");
+const { electron } = require("process");
 
 let mainWindow;
 let electronState;
@@ -160,6 +161,11 @@ ipcMain.on('Upgrade lotus', async (event, message) => {
   try {
     await upgradeLotus();
     mainWindow.webContents.send("Upgrade complete");
+    electronState.updateAvailable = false;
+    mainWindow.webContents.send(
+      "electron-state",
+      JSON.stringify(electronState)
+    );
   } catch (error) {
     console.log(error);
     mainWindow.webContents.send("launch-updates", "Error");

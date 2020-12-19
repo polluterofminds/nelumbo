@@ -1,5 +1,6 @@
 import createDataContext from "../context/createDataContext";
 import { setLotusVersion, setMissingDependencies, setUpdateText, setStatus, setLotusToken } from '../actions/lotus';
+import { fetchRecentTransactions } from '../actions/explorer';
 import { LOTUS_VERSION, MISSING_DEPENDENCIES, LAUNCH_UPDATE, LOTUS_STATE, LOTUS_TOKEN } from "../actions/types";
 
 const initialState = {
@@ -51,7 +52,8 @@ export const { Context, Provider } = createDataContext(
     setMissingDependencies,
     setUpdateText, 
     setStatus, 
-    setLotusToken
+    setLotusToken, 
+    fetchRecentTransactions
   },
   initialState
 );

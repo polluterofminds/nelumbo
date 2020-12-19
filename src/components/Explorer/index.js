@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import Results from './Results';
+import { Context } from '../../reducer/store';
 
 const Explorer = () => {
+  const { state, fetchRecentTransactions } = useContext(Context);
+  const { lotusToken } = state;
+  useEffect(() => {
+    fetchRecentTransactions(lotusToken);
+  }, [])
   return (
-    <div className="flex-container">
-      Explorer
+    <div>
+      <div>
+        <input type="text" />
+        <Results />
+      </div>
     </div>
   )
 }

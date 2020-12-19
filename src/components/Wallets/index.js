@@ -44,10 +44,6 @@ const Wallets = () => {
 }
 
 const styles = {
-  flex: {
-    display: "flex", 
-    flexDirection: "row"
-  },
   btn: {
     marginTop: 25, 
     marginLeft: 20, 
