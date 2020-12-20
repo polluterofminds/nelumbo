@@ -85,7 +85,8 @@ class LotusClient {
         method: "Filecoin.StateListMessages",
         params: [
           {
-            To: to,
+            To: to, 
+            From: from
           },
           null,
           finalBlock,

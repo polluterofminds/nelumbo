@@ -1,5 +1,5 @@
-import Results from "../components/Explorer/Results";
 import { instantiateLotus } from "../utils/helpers";
+import { TRANSACTIONS, FILTERED_TRANSACTIONS } from "./types";
 
 export const chainHead = async (token) => {
   try {
@@ -67,13 +67,25 @@ export const fetchRecentTransactions = (dispatch) => {
       }      
     }
 
+    let messagesToDisplay = [];
+
     for(const message of allMessages) {
       const { result:res } = await getSingleMessage(token, message);
-      console.log(res);
+      messagesToDisplay.push(res);
     }
-    // dispatch({
-    //   type: TRANSACTIONS, 
-    //   payload: status
-    // })
+    dispatch({
+      type: TRANSACTIONS, 
+      payload: messagesToDisplay
+    })
+  }
+}
+
+export const filterTransactions = (dispatch) => {
+  return (term, transactions) => {
+    const filtered = transactions.filter(t => t.CID["/"].includes(term) || t.To.includes(term) || t.From.includes(term))
+    dispatch({
+      type: FILTERED_TRANSACTIONS, 
+      payload: filtered
+    })
   }
 }

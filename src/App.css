@@ -78,3 +78,7 @@ h1, h2, h3, h4, h5, h6, p {
 .no-btn:hover h3 {
   color: #026863;
 }
+
+td {
+  padding: 10px;
+}

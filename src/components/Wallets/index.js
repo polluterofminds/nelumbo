@@ -34,7 +34,7 @@ const Wallets = () => {
   }
   return (
     <div style={styles.container}>
-      <div style={styles.flex}>
+      <div>
         <h1>Wallets ({wallets.length})</h1>
         <button onClick={createWallet} style={styles.btn} className="btn btn-primary">Create Wallet</button>
       </div>

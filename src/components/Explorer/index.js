@@ -3,16 +3,15 @@ import Results from './Results';
 import { Context } from '../../reducer/store';
 
 const Explorer = () => {
-  const { state, fetchRecentTransactions } = useContext(Context);
-  const { lotusToken } = state;
+  const { state, fetchRecentTransactions, filterTransactions } = useContext(Context);
+  const { lotusToken, transactions, filteredTransactions } = state;
   useEffect(() => {
     fetchRecentTransactions(lotusToken);
   }, [])
   return (
-    <div>
+    <div style={{ marginTop: 50 }}>
       <div>
-        <input type="text" />
-        <Results />
+        <Results transactions={transactions} filteredTransactions={filteredTransactions} filterTransactions={filterTransactions} />
       </div>
     </div>
   )

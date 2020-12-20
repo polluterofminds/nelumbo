@@ -1,7 +1,7 @@
 import createDataContext from "../context/createDataContext";
 import { setLotusVersion, setMissingDependencies, setUpdateText, setStatus, setLotusToken } from '../actions/lotus';
-import { fetchRecentTransactions } from '../actions/explorer';
-import { LOTUS_VERSION, MISSING_DEPENDENCIES, LAUNCH_UPDATE, LOTUS_STATE, LOTUS_TOKEN } from "../actions/types";
+import { fetchRecentTransactions, filterTransactions } from '../actions/explorer';
+import { LOTUS_VERSION, MISSING_DEPENDENCIES, LAUNCH_UPDATE, LOTUS_STATE, LOTUS_TOKEN, TRANSACTIONS, FILTERED_TRANSACTIONS } from "../actions/types";
 
 const initialState = {
   updateAvailable: false,
@@ -9,7 +9,9 @@ const initialState = {
   lotusVersion: null, 
   launchUpdateText: null, 
   lotusState: null, 
-  lotusToken: null
+  lotusToken: null,
+  transactions: [], 
+  filteredTransactions: []
 };
 
 export const reducer = (state, action) => {
@@ -40,6 +42,17 @@ export const reducer = (state, action) => {
         ...state, 
         lotusToken: action.payload
       }
+    case TRANSACTIONS: 
+      return {
+        ...state, 
+        transactions: action.payload, 
+        filteredTransactions: action.payload
+      }
+    case FILTERED_TRANSACTIONS: 
+      return {
+        ...state,
+        filteredTransactions: action.payload
+      }
     default:
       return state;
   }
@@ -53,7 +66,8 @@ export const { Context, Provider } = createDataContext(
     setUpdateText, 
     setStatus, 
     setLotusToken, 
-    fetchRecentTransactions
+    fetchRecentTransactions, 
+    filterTransactions
   },
   initialState
 );
