@@ -84,10 +84,10 @@ const Main = () => {
     )
   } else {
     return (
-      <div className='flex-container'>
+      <div>
         {
           launching ? 
-          <div>
+          <div className='flex-container'>
             <h1>{launchUpdateText}</h1> 
             { 
               launchUpdateText === 'Error' &&  
@@ -97,7 +97,7 @@ const Main = () => {
           : 
           running ? 
           <Lotus /> :
-          <div>
+          <div className='flex-container'>
             { 
               state.updateAvailable && <LotusUpgradeAvailable />
             }
