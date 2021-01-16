@@ -10,6 +10,9 @@ const Navigation = ({ setPage, page }) => {
         <li onClick={() => setPage('explorer')} style={page === 'explorer' ? styles.active : styles.inactive}>
           Explorer
         </li>
+        <li onClick={() => setPage('api')} style={page === 'api' ? styles.active : styles.inactive}>
+          API
+        </li>
       </ul>
     </div>
   )

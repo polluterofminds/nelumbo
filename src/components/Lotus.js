@@ -4,6 +4,7 @@ import Wallets from './Wallets/';
 import Explorer from './Explorer/';
 import Navigation from './Navigation';
 import { getLotusToken } from '../actions/lotus';
+import API from './API/index';
 
 const Lotus = () => {
   const [page, setPage] = useState("wallets");
@@ -14,6 +15,8 @@ const Lotus = () => {
         return <Wallets />;
       case "explorer": 
         return <Explorer />;
+      case "api": 
+        return <API />;
       default: 
         return <Wallets />;
     }

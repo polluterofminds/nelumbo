@@ -82,3 +82,42 @@ h1, h2, h3, h4, h5, h6, p {
 td {
   padding: 10px;
 }
+
+.api-sidebar > ul, .api-sidebar ul li ul {
+  list-style-type: none;
+}
+
+.api-sidebar ul li, .api-sidebar ul li ul li {
+  cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.docs {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.docs-sidebar {
+  max-width: 30%;
+  border-right: 1px solid #fff;
+  padding-right: 20px;
+}
+
+.docs-main {
+  max-width: 50%;
+  margin: auto;
+  margin-bottom: 50px;
+}
+
+.markdown-content {
+  overflow-wrap: break-word;
+}
+
+.docs-example {
+  max-width: 20%;
+  margin: auto;
+}
