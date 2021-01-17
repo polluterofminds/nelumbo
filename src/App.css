@@ -1,16 +1,22 @@
 @font-face {
-  font-family: 'Goldman';
-  src: url('./assets/fonts/Goldman-Regular.ttf');
+  font-family: "Goldman";
+  src: url("./assets/fonts/Goldman-Regular.ttf");
 }
 
 @font-face {
-  font-family: 'NotoSans';
-  src: url('./assets/fonts/NotoSansJP-Regular.otf');
+  font-family: "NotoSans";
+  src: url("./assets/fonts/NotoSansJP-Regular.otf");
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   color: #fff;
-  font-family: 'NotoSans', sans-serif;
+  font-family: "NotoSans", sans-serif;
   font-weight: 100;
 }
 
@@ -23,8 +29,8 @@ h1, h2, h3, h4, h5, h6, p {
   width: 100vw;
   display: flex;
   flex-direction: column;
-  align-items: center; 
-  justify-content: center; 
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -37,7 +43,7 @@ h1, h2, h3, h4, h5, h6, p {
   width: 100px;
   border-radius: 0px;
   border: none;
-  font-family: 'Goldman', sans-serif;
+  font-family: "Goldman", sans-serif;
   cursor: pointer;
 }
 
@@ -50,15 +56,18 @@ h1, h2, h3, h4, h5, h6, p {
   position: fixed;
   top: 15px;
   right: 50px;
-} 
+}
 
 .floating-version p {
-  font-family: 'Goldman', sans-serif;
+  font-family: "Goldman", sans-serif;
   font-size: 10px;
   color: #fff;
 }
 
-.no-btn, .no-btn:hover, .no-btn:focus, .no-btn:focus {
+.no-btn,
+.no-btn:hover,
+.no-btn:focus,
+.no-btn:focus {
   background: none;
   border: none;
   cursor: pointer;
@@ -72,7 +81,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .no-btn h3 {
-  font-family: 'Goldman', sans-serif!important;
+  font-family: "Goldman", sans-serif !important;
 }
 
 .no-btn:hover h3 {
@@ -83,11 +92,13 @@ td {
   padding: 10px;
 }
 
-.api-sidebar > ul, .api-sidebar ul li ul {
+.api-sidebar > ul,
+.api-sidebar ul li ul {
   list-style-type: none;
 }
 
-.api-sidebar ul li, .api-sidebar ul li ul li {
+.api-sidebar ul li,
+.api-sidebar ul li ul li {
   cursor: pointer;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -115,6 +126,14 @@ td {
 
 .markdown-content {
   overflow-wrap: break-word;
+}
+
+.markdown-content pre {
+  background: #eee;
+  padding: 20px;
+  color: #282828;
+  border-radius: 5px;
+  white-space: pre-wrap;
 }
 
 .docs-example {
