@@ -37,17 +37,11 @@ const API = () => {
           transformImageUri={handleImageTransform}
           // renderers={{
           //   link: handleProps,
-          //   code: CodeBlock,
-          //   text: handleTemplate,
-          //   inlineCode: InlineCodeBlock,
           // }}
           options={{ tables: true, emoji: true }}
           source={markdown}
           allowDangerousHtml={true}
         />
-      </div>
-      <div className="docs-example">
-        <h3>Test it!</h3>
       </div>
     </div>
   );

@@ -28,6 +28,11 @@ const APISidebar = ({ docsToDisplay, setDocs }) => {
             <li style={docsToDisplay === "ClientListImports" ? styles.active : styles.inactive} onClick={() => setDocs("ClientListImports")}>ClientListImports</li>
             <li style={docsToDisplay === "ClientQueryAsk" ? styles.active : styles.inactive} onClick={() => setDocs("ClientQueryAsk")}>ClientQueryAsk</li>
             <li style={docsToDisplay === "ClientDealSize" ? styles.active : styles.inactive} onClick={() => setDocs("ClientDealSize")}>ClientDealSize</li>
+            <li style={docsToDisplay === "ClientStartDeal" ? styles.active : styles.inactive} onClick={() => setDocs("ClientStartDeal")}>ClientStartDeal</li>
+            <li style={docsToDisplay === "ClientGetDealInfo" ? styles.active : styles.inactive} onClick={() => setDocs("ClientGetDealInfo")}>ClientGetDealInfo</li>
+            <li style={docsToDisplay === "ClientGetDealStatus" ? styles.active : styles.inactive} onClick={() => setDocs("ClientGetDealStatus")}>ClientGetDealStatus</li>
+            <li style={docsToDisplay === "ClientListDeals" ? styles.active : styles.inactive} onClick={() => setDocs("ClientListDeals")}>ClientListDeals</li>
+            <li style={docsToDisplay === "ClientRetrieve" ? styles.active : styles.inactive} onClick={() => setDocs("ClientRetrieve")}>ClientRetrieve</li>
           </ul>
         </li>
       </ul>

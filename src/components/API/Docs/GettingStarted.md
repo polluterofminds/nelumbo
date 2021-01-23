@@ -22,7 +22,7 @@ curl API_ROOT_URI/v1/newToken \
   -d id="3"
 ```
 
-Examples from some of the main methods you will use against your Filecoin node will be documented throughout this section of the application. 
+Examples from some of the main methods you will use against your Filecoin node will be documented throughout this section of the application. For full documentation of the available Filecoin Lotus API methods, checkout the official docs. 
 
 ### Spotted an Error?
 
