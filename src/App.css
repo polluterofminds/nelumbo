@@ -140,3 +140,28 @@ td {
   max-width: 20%;
   margin: auto;
 }
+
+.configure-lotus {
+  max-width: 85%;
+  margin: auto;
+  margin-top: 80px;
+}
+
+.configure-lotus {
+  width: 500px;
+  margin-bottom: 100px;
+}
+
+.configure-lotus div div input {
+  padding: 10px;
+  border: none;
+  outline: none;
+  min-width: 300px;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}

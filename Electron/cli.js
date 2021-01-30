@@ -1,6 +1,8 @@
 const { execSync, exec } = require("child_process");
 const axios = require("axios");
 const semver = require("semver");
+const home = require("os").homedir();
+const fs = require("fs");
 //  When we need sudo access, the below will create a native macOS prompt
 // const sudo = require('sudo-prompt');
 // const options = {
@@ -261,7 +263,7 @@ module.exports = {
         }, 3000) 
       } catch (error) {
         reject(error);
-      }
+      }                                                                                                                                 
     })
   },
   stopLotus: async () => {
@@ -341,6 +343,26 @@ module.exports = {
         await fundWallet(w);
       }
       return;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+  updateConfig: async (config) => {
+    try {
+      return new Promise(async (resolve, reject) => {
+        exec('touch ~/.lotus/config.toml', async (err, stdout, stderr) => {
+          if(err || stderr) {
+            resolve(false)
+          } else {
+            try {
+              await fs.writeFileSync(`${home}/.lotus/config.toml`, config);
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          }
+        })
+      })      
     } catch (error) {
       throw error;
     }

@@ -3,6 +3,7 @@ import Logo from '../assets/img/logo_transparent.png';
 import Lotus from './Lotus';
 import { Context } from '../reducer/store';
 import { getLotusToken } from '../actions/lotus';
+import Configure from './Configure';
 
 const Main = () => {
   const { state } = useContext(Context);
@@ -10,6 +11,7 @@ const Main = () => {
   const [running, setRunning] = useState(false);
   const [allowStart, setAllowStart] = useState(true);
   const [upgrading, setUpgrading] = useState(false);
+  const [configure, setConfigure] = useState(false);
   const { lotusVersion, launchUpdateText, lotusState, missingDependencies } = state;
 
   useEffect(() => {
@@ -82,6 +84,8 @@ const Main = () => {
     return (
       <Lotus />
     )
+  } else if(configure) {
+    return <Configure setConfigure={setConfigure} />
   } else {
     return (
       <div>
@@ -107,6 +111,8 @@ const Main = () => {
             <img className='logo' src={Logo} alt='Nelumbo logo' />
             <h1>Create your local Lotus blockchain with one click</h1>
             <button onClick={handleLaunch} className='btn btn-primary'>Launch</button>
+            <button style={{marginTop: 10, marginBottom: 10}} className="btn btn-secondary" onClick={() => setConfigure(true)}>Configure</button>
+            <span>Any configuration should be done before launching.</span>
           </div>
         }
       </div>

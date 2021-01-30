@@ -1,5 +1,5 @@
 rm -rf ~/lotus/ && 
-rm -rf ~/.lotus && 
+find ~/.lotus/ \! -name 'config.toml' -delete && 
 rm -rf ~/.lotusminer &&
 cd ~/ && 
 git clone https://github.com/filecoin-project/lotus.git && 

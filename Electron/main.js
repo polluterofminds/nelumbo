@@ -12,20 +12,26 @@ const {
   upgradeLotus, 
   stopLotus, 
   getLotusToken,
-  createWallets
+  createWallets,
+  updateConfig
 } = require("./cli");
 const isOnline = require("is-online");
 const { electron } = require("process");
 
 let mainWindow;
 let electronState;
+let lotusConfig;
 
 try {
   require("electron-reloader")(module);
 } catch (_) {}
 
-const startLotus = async (existingRepo) => {
+const startLotus = async (existingRepo, config) => {
   try {
+    if(config) {
+      mainWindow.webContents.send("launch-updates", "Updating lotus configuration...");
+      await updateConfig(config);
+    }    
     mainWindow.webContents.send("launch-updates", "Starting workers...");
     await startWorkers(existingRepo);
     mainWindow.webContents.send("launch-updates", "Starting miner...");
@@ -93,6 +99,10 @@ const createWindow = () => {
   });
 };
 
+ipcMain.on("Update Config", async (event, message) => {
+  lotusConfig = message;
+})
+
 ipcMain.on("launch", async (event, message) => {
   try {
     const { missingDependencies } = electronState;
@@ -110,7 +120,7 @@ ipcMain.on("launch", async (event, message) => {
     }
 
     const existingLotusRepo = missingDependencies.filter((dep) => dep.reason === 'lotus').length === 0
-    await startLotus(existingLotusRepo);
+    await startLotus(existingLotusRepo, lotusConfig);
   } catch (error) {
     console.log(error);
     mainWindow.webContents.send("launch-updates", "Error");

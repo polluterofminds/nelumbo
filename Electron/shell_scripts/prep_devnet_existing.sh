@@ -1,4 +1,9 @@
+mkdir ~/.tempLotus && 
+mv ~/.lotus/config.toml ~/.tempLotus/config.toml && 
 rm -rf ~/.lotus && 
+mkdir ~/.lotus && 
+mv ~/.tempLotus/config.toml ~/.lotus/config.toml && 
+rm -rf ~/.tempLotus &&
 rm -rf ~/.lotusminer &&
 cd ~/lotus && 
 export CGO_CFLAGS_ALLOW="-D__BLST_PORTABLE__" && 
