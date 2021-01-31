@@ -13,7 +13,8 @@ const {
   stopLotus, 
   getLotusToken,
   createWallets,
-  updateConfig
+  updateConfig,
+  startIPFS
 } = require("./cli");
 const isOnline = require("is-online");
 const { electron } = require("process");
@@ -101,6 +102,11 @@ const createWindow = () => {
 
 ipcMain.on("Update Config", async (event, message) => {
   lotusConfig = message;
+});
+
+ipcMain.on("Start IPFS", async (event, message) => {
+  await startIPFS();
+  mainWindow.webContents.send("ipfs update", "ipfs running");
 })
 
 ipcMain.on("launch", async (event, message) => {

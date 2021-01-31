@@ -106,7 +106,6 @@ class LotusClient {
 
   getSingleMessage = async (messageCid) => {
     try {
-      console.log(messageCid);
       const data = JSON.stringify({
         jsonrpc: "2.0",
         method: "Filecoin.ChainGetMessage",

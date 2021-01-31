@@ -26,7 +26,6 @@ const checkOnDependencies = async (dependency) => {
           .split(" ")[0];
         const goSubVersion = goVersion.toString().split(".")[2].split(" ")[0];
         const goV = `${goRootVersion}.${goMainVersion}`;
-        console.log(goV);
         const newerGo = semver.gte(targetGo, goV);
         if (newerGo);
         throw {
@@ -163,7 +162,7 @@ module.exports = {
         hwloc,
         lotus,
       ].filter((d) => d.status === "rejected");
-      console.log(failedDependencies);
+      
       return failedDependencies;
     } catch (error) {
       throw error;
@@ -253,14 +252,17 @@ module.exports = {
       try {
         const zshAvailable = await checkShell();
         const script = zshAvailable ? 'zsh ./Electron/shell_scripts/devnet_miner.sh' : 'bash ./Electron/shell_scripts/devnet_miner.sh';
-        exec(script, (err) => {
+        exec(script, (err, stdout, stderr) => {
           if(err) {
             reject(err);
+          }
+          if(stderr) {
+            reject(stderr)
           }
         });
         setTimeout(() => {
           resolve();
-        }, 3000) 
+        }, 5000) 
       } catch (error) {
         reject(error);
       }                                                                                                                                 
@@ -366,5 +368,22 @@ module.exports = {
     } catch (error) {
       throw error;
     }
+  }, 
+  startIPFS: async () => {
+    return new Promise((resolve, reject) => {
+      try {
+        exec("ipfs daemon", (err, stdout, stderr) => {
+          if(err) {
+            reject(err);
+          }
+          //  Give it 2.5 seconds for the daemon to start
+          setTimeout(() => {
+            resolve();
+          }, 2500)
+        })
+      } catch (error) {
+        reject(error);
+      }
+    })
   }
 };

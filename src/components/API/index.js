@@ -13,7 +13,6 @@ const API = () => {
     const MarkdownContent = await import(`./Docs/${docsToDisplay}.md`);
     const res = await fetch(MarkdownContent.default);
     const text = await res.text();
-    console.log(text);
     setMarkdown(text);
   };
 

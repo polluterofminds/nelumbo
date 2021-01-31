@@ -148,8 +148,7 @@ export const createCSV = (JSONData, ShowLabel = true) => {
 
       document.body.removeChild(element);
       resolve(CSV);
-    } catch (error) {
-      console.log(error);
+    } catch (error) {      
       reject(error);
     }
   });

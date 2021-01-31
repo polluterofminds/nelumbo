@@ -4,6 +4,7 @@ const json2toml = require('json2toml');
 
 const Configure = ({ setConfigure }) => {
   const [newConfig, setNewConfig] = useState(null);
+  const [ipfsModal, setIPFSModal] = useState(false);
   useEffect(() => {
     var data = TOML.parse(`# Default config:
     [API]
@@ -60,7 +61,7 @@ const Configure = ({ setConfigure }) => {
     setNewConfig(updatedConfig);
   }
 
-  const handleSave = () => {
+  const handleSave = (e, confirm) => {
     const keys = Object.keys(newConfig);
     
     for(const key of keys) {
@@ -71,9 +72,25 @@ const Configure = ({ setConfigure }) => {
         }
       }
     }
-    console.log(newConfig);
-    window.ipcRenderer.send('Update Config', json2toml(newConfig));
-    setConfigure(false);
+    if(newConfig.Client.UseIpfs && !confirm) {      
+      setIPFSModal(true);
+    } else {
+      window.ipcRenderer.send('Update Config', json2toml(newConfig));
+      window.ipcRenderer.send("Start IPFS");
+      setConfigure(false);
+    }    
+  }
+
+  if(ipfsModal) {
+    return (
+      <div className="confirm-ipfs">
+        <h3>Start IPFS</h3>
+        <p>You've chosen to integrate IPFS with your Filecoin node. You will need to make sure IPFS is installed on your machine.</p>
+        <p>By clicking confirm, IPFS will start automatically, assuming it is installed.</p>
+        <button onClick={(e) => handleSave(e, true)} className="btn btn-primary">Confirm</button>
+        <button className="btn btn-secondary">Cancel</button>
+      </div>
+    )
   }
 
   return (

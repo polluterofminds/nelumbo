@@ -108,6 +108,9 @@ const Main = () => {
             <div className='floating-version'>
               <p>{lotusVersion && `Lotus Version: ${lotusVersion}`}</p>
             </div>
+            <div className='floating-version'>
+              <p>{lotusVersion && `Lotus Version: ${lotusVersion}`}</p>
+            </div>
             <img className='logo' src={Logo} alt='Nelumbo logo' />
             <h1>Create your local Lotus blockchain with one click</h1>
             <button onClick={handleLaunch} className='btn btn-primary'>Launch</button>
