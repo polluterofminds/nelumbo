@@ -25,3 +25,4 @@ yarn-error.log*
 .env
 
 /Nelumbo-darwin-x64
+/releases
