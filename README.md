@@ -2,7 +2,9 @@
 
 Nelumbo is a one-click, development blockchain for Filecoin that you can run on your Mac. Rather than spending time with dependencies, version management, and command-line difficulties, you can launch a development version of the Filecoin Lotus blockchain. This let's you get to the important stuff faster—building.
 
-[Download Here]()
+[Download From IPFS Here](https://gateway.pinata.cloud/ipfs/Qmd3Y2RkarPyHVrAyoLYfhEi5Amkn7iqUyvXUsEDCTRkpG)
+
+You can verify the validity of the app by ensuring the hash is `Qmd3Y2RkarPyHVrAyoLYfhEi5Amkn7iqUyvXUsEDCTRkpG`.
 
 ## Project Status  
 
