@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 const TOML = require('@iarna/toml');
 const json2toml = require('json2toml');
+const { ipcRenderer } = window.require("electron");
 
 const Configure = ({ setConfigure }) => {
   const [newConfig, setNewConfig] = useState(null);
@@ -75,8 +76,8 @@ const Configure = ({ setConfigure }) => {
     if(newConfig.Client.UseIpfs && !confirm) {      
       setIPFSModal(true);
     } else {
-      window.ipcRenderer.send('Update Config', json2toml(newConfig));
-      window.ipcRenderer.send("Start IPFS");
+      ipcRenderer.send('Update Config', json2toml(newConfig));
+      ipcRenderer.send("Start IPFS");
       setConfigure(false);
     }    
   }

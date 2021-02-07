@@ -365,4 +365,4 @@ class LotusClient {
   };
 }
 
-module.exports = LotusClient;
+export default LotusClient;

@@ -1,21 +1,25 @@
+require("dotenv").config();
 const { execSync, exec } = require("child_process");
 const axios = require("axios");
 const semver = require("semver");
 const home = require("os").homedir();
 const fs = require("fs");
+const path = require("path");
+const isDev = require("electron-is-dev");
+const { ExceptionlessClient } = require("exceptionless");
+const client = ExceptionlessClient.default;
+client.config.apiKey = process.env.EXCEPTIONLESS_KEY;
+const fixPath = require("fix-path");
 //  When we need sudo access, the below will create a native macOS prompt
 // const sudo = require('sudo-prompt');
 // const options = {
 //   name: 'Nelumbo'
 // };
-
+let shellURL = isDev ? `./Electron/shell_scripts/` : path.join(process.resourcesPath, '/app/Electron/shell_scripts/');
 const checkOnDependencies = async (dependency) => {
+  fixPath();
   return new Promise(async (resolve, reject) => {
     try {
-      const dep =
-        dependency === "xcode"
-          ? execSync("xcode-select -p")
-          : execSync(`which ${dependency}`);
       if (dependency === "go") {
         const targetGo = "1.15.5";
         const goVersion = execSync("go version");
@@ -33,6 +37,11 @@ const checkOnDependencies = async (dependency) => {
           value: "go",
         };
       }
+      const dep =
+        dependency === "xcode"
+          ? execSync("xcode-select -p")
+          : execSync(`which ${dependency}`);
+
       resolve(dep.toString());
     } catch (error) {
       reject(dependency);
@@ -41,6 +50,7 @@ const checkOnDependencies = async (dependency) => {
 };
 
 const checkShell = async () => {
+  fixPath();
   return new Promise((resolve, reject) => {
     try {
       exec('which zsh', (err) => {
@@ -57,6 +67,7 @@ const checkShell = async () => {
 }
 
 const prepDevnet = async (script) => {
+  fixPath();
   return new Promise((resolve, reject) => {
     try {
       exec(script, (err, stdout, stderr) => {
@@ -72,6 +83,7 @@ const prepDevnet = async (script) => {
 }
 
 const startDaemon = async (script) => {
+  fixPath();
   return new Promise((resolve, reject) => {
     try {
       exec(script, (err, stdout, stderr) => {
@@ -89,6 +101,7 @@ const startDaemon = async (script) => {
 }
 
 const stopMiner = async () => {
+  fixPath();
   return new Promise((resolve) => {
     exec('lotus-miner stop');
     resolve();
@@ -96,6 +109,7 @@ const stopMiner = async () => {
 }
 
 const stopDaemon = async () => {
+  fixPath();
   return new Promise((resolve) => {
     exec('lotus daemon stop')
     resolve();
@@ -103,6 +117,7 @@ const stopDaemon = async () => {
 }
 
 const createWallet = () => {
+  fixPath();
   return new Promise((resolve, reject) => {
     exec("lotus wallet new", (err, stdout) => {
       if(err) {
@@ -114,6 +129,7 @@ const createWallet = () => {
 }
 
 const fundWallet = (wallet) => {
+  fixPath();
   return new Promise((resolve, reject) => {
     exec(`lotus send ${wallet.replace(/(\r\n|\n|\r)/gm, "")} 4999999`, (err) => {
       if(err) {
@@ -127,48 +143,70 @@ const fundWallet = (wallet) => {
 module.exports = {
   checkOnDependencies: async () => {
     try {
-      const [
-        brew,
-        xcode,
-        git,
-        go,
-        bzr,
-        jq,
-        pkgConfig,
-        cargo,
-        hwloc,
-        lotus,
-      ] = await Promise.allSettled([
-        checkOnDependencies("brew"),
-        checkOnDependencies("xcode"),
-        checkOnDependencies("git"),
-        checkOnDependencies("go"),
-        checkOnDependencies("bzr"),
-        checkOnDependencies("jq"),
-        checkOnDependencies("pkg-config"),
-        checkOnDependencies("cargo"),
-        checkOnDependencies("hwloc"),
-        checkOnDependencies("lotus"),
-      ]);
-      const failedDependencies = [
-        brew,
-        xcode,
-        git,
-        go,
-        bzr,
-        jq,
-        pkgConfig,
-        cargo,
-        hwloc,
-        lotus,
-      ].filter((d) => d.status === "rejected");
+      const dependencies = [ 
+        "brew",
+        "xcode",
+        "git",
+        "go",
+        "bzr",
+        "jq",
+        "pkgConfig",
+        "cargo",
+        "hwloc",
+        "lotus"]
+      // const [
+      //   brew,
+      //   xcode,
+      //   git,
+      //   go,
+      //   bzr,
+      //   jq,
+      //   pkgConfig,
+      //   cargo,
+      //   hwloc,
+      //   lotus,
+      // ] = await Promise.allSettled([
+      //   checkOnDependencies("brew"),
+      //   checkOnDependencies("xcode"),
+      //   checkOnDependencies("git"),
+      //   checkOnDependencies("go"),
+      //   checkOnDependencies("bzr"),
+      //   checkOnDependencies("jq"),
+      //   checkOnDependencies("pkg-config"),
+      //   checkOnDependencies("cargo"),
+      //   checkOnDependencies("hwloc"),
+      //   checkOnDependencies("lotus"),
+      // ]);
+
+      const failedDependencies = [];
+      for (const dep of dependencies) {
+        try {
+          await checkOnDependencies(dep);
+        } catch (error) {
+          failedDependencies.push(dep);
+        }
+      }
+      // const failedDependencies = [
+      //   brew,
+      //   xcode,
+      //   git,
+      //   go,
+      //   bzr,
+      //   jq,
+      //   pkgConfig,
+      //   cargo,
+      //   hwloc,
+      //   lotus,
+      // ].filter((d) => d.status === "rejected");
       
       return failedDependencies;
     } catch (error) {
+      client.submitException(error);
       throw error;
     }
   },
   getLocalLotusVersion: async () => {
+    fixPath();
     return new Promise((resolve, reject) => {
       try {
         const lotus = execSync("lotus --version");
@@ -179,6 +217,7 @@ module.exports = {
     });
   },
   getCurrentLotusVersion: async () => {
+    fixPath();
     try {
       //
       const releases = await axios.get(
@@ -195,6 +234,7 @@ module.exports = {
     }
   },
   installDependencies: async (dependencies) => {
+    fixPath();
     return new Promise(async (resolve, reject) => {
       try {
         for (const dep of dependencies) {
@@ -235,12 +275,13 @@ module.exports = {
     });
   },
   startWorkers: async (existingRepo) => {
+    fixPath();
     return new Promise(async (resolve, reject) => {
       try {
         const zshAvailable = await checkShell();
         const shellToUse = zshAvailable ? 'zsh' : 'bash';      
-        await prepDevnet(`${shellToUse} ./Electron/shell_scripts/${existingRepo ? "prep_devnet_existing.sh" : "prep_devnet_new.sh"}`);
-        await startDaemon(`${shellToUse} ./Electron/shell_scripts/run_daemon.sh`)
+        await prepDevnet(`${shellToUse} ${shellURL}${existingRepo ? "prep_devnet_existing.sh" : "prep_devnet_new.sh"}`);
+        await startDaemon(`${shellToUse} ${shellURL}run_daemon.sh`)
         resolve();
       } catch (error) {
         reject(error);
@@ -248,10 +289,11 @@ module.exports = {
     });
   },
   startMiner: async () => {
+    fixPath();
     return new Promise(async (resolve, reject) => {
       try {
         const zshAvailable = await checkShell();
-        const script = zshAvailable ? 'zsh ./Electron/shell_scripts/devnet_miner.sh' : 'bash ./Electron/shell_scripts/devnet_miner.sh';
+        const script = zshAvailable ? `zsh ${shellURL}devnet_miner.sh` : `bash ${shellURL}devnet_miner.sh`;
         exec(script, (err, stdout, stderr) => {
           if(err) {
             reject(err);
@@ -269,6 +311,7 @@ module.exports = {
     })
   },
   stopLotus: async () => {
+    fixPath();
     return new Promise((resolve, reject) => {
       try {
         exec('lotus daemon stop && lotus-miner stop', (err) => {
@@ -284,6 +327,7 @@ module.exports = {
     })    
   }, 
   checkLotusState: async () => {
+    fixPath();
     return new Promise((resolve, reject) => {
       try {
         exec('lotus net listen', (err, stdout, stderr) => {
@@ -299,10 +343,11 @@ module.exports = {
     })
   }, 
   upgradeLotus: async () => {
+    fixPath();
     return new Promise(async (resolve, reject) => {
       try {
         const zshAvailable = await checkShell();
-        const script = zshAvailable ? 'zsh ./Electron/shell_scripts/upgrade_lotus.sh' : 'bash ./Electron/shell_scripts/upgrade_lotus.sh';
+        const script = zshAvailable ? `zsh ${shellURL}upgrade_lotus.sh` : `bash ${shellURL}upgrade_lotus.sh`;
         exec(script, (err) => {
           if(err) {
             reject(err)
@@ -315,11 +360,13 @@ module.exports = {
     })
   }, 
   stopLotus: async () => {
+    fixPath();
     await stopMiner();
     await stopDaemon();
     return;
   }, 
   getLotusToken: async () => {
+    fixPath();
     return new Promise((resolve, reject) => {
       exec('cat ~/.lotus/token', (err, stdout, stderr) => {
         if(err) {
@@ -330,6 +377,7 @@ module.exports = {
     })
   },
   createWallets: async () => {
+    fixPath();
     try {
       let wallets = 0;
       let walletList = []
@@ -350,6 +398,7 @@ module.exports = {
     }
   }, 
   updateConfig: async (config) => {
+    fixPath();
     try {
       return new Promise(async (resolve, reject) => {
         exec('touch ~/.lotus/config.toml', async (err, stdout, stderr) => {
@@ -370,6 +419,7 @@ module.exports = {
     }
   }, 
   startIPFS: async () => {
+    fixPath();
     return new Promise((resolve, reject) => {
       try {
         exec("ipfs daemon", (err, stdout, stderr) => {

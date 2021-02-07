@@ -1,4 +1,5 @@
 import { LOTUS_VERSION, MISSING_DEPENDENCIES, LAUNCH_UPDATE, LOTUS_STATE, LOTUS_TOKEN } from './types';
+const { ipcRenderer } = window.require("electron");
 
 export const setLotusVersion = (dispatch) => {
   return (lotusVersion, updateAvailable) => {
@@ -37,7 +38,7 @@ export const setStatus = (dispatch) => {
 }
 
 export const getLotusToken = () => {
-  window.ipcRenderer.send("get-token");    
+  ipcRenderer.send("get-token");    
 }
 
 export const setLotusToken = (dispatch) => {

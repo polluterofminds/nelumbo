@@ -3,6 +3,7 @@ import { Context } from '../../reducer/store';
 import WalletList from './WalletList';
 import { getWallets, newWallet } from '../../actions/wallets';
 import { getLotusToken } from '../../actions/lotus';
+const { ipcRenderer } = window.require("electron");
 
 const Wallets = () => {
   const { state, setLotusToken } = useContext(Context);
@@ -10,7 +11,7 @@ const Wallets = () => {
   const { lotusToken } = state;
 
   useEffect(() => {
-    window.ipcRenderer.on("received-token", (event, message) => {
+    ipcRenderer.on("received-token", (event, message) => {
 
       setLotusToken(message);    
     });

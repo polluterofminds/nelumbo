@@ -4,6 +4,7 @@ import Lotus from './Lotus';
 import { Context } from '../reducer/store';
 import { getLotusToken } from '../actions/lotus';
 import Configure from './Configure';
+const { ipcRenderer } = window.require("electron");
 
 const Main = () => {
   const { state } = useContext(Context);
@@ -13,9 +14,8 @@ const Main = () => {
   const [upgrading, setUpgrading] = useState(false);
   const [configure, setConfigure] = useState(false);
   const { lotusVersion, launchUpdateText, lotusState, missingDependencies } = state;
-
   useEffect(() => {
-    window.ipcRenderer.on('Upgrade complete', (event, message) => {
+    ipcRenderer.on('Upgrade complete', (event, message) => {
       setUpgrading(false)
     });
   })
@@ -34,7 +34,7 @@ const Main = () => {
   }, [launchUpdateText]);
 
   const handleUpgrade = () => {
-    window.ipcRenderer.send('Upgrade lotus');
+    ipcRenderer.send('Upgrade lotus');
     setUpgrading(true);
   }
 
@@ -49,21 +49,21 @@ const Main = () => {
   const handleLaunch = () => {
     try {
       setLaunching(true);
-      window.ipcRenderer.send("launch");
+      ipcRenderer.send("launch");
     } catch (error) {
       setLaunching(false);
     }
   }
   const restartNode = () => {
-    window.ipcRenderer.send("re-launch");
+    ipcRenderer.send("re-launch");
   }
 
   const checkDependencies = () => {
-    window.ipcRenderer.send('Check dependencies');
+    ipcRenderer.send('Check dependencies');
   }
 
   const openBrew = () => {
-    window.ipcRenderer.send('Open link', "https://brew.sh")
+    ipcRenderer.send('Open link', "https://brew.sh")
   }
 
   if(allowStart === false) {

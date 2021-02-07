@@ -1,13 +1,14 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { getSingleMessage } from '../../actions/explorer';
 import { Context } from "../../reducer/store";
+const { ipcRenderer } = window.require("electron");
 
 const Overlay = ({cid, setOverlay}) => {
   const { state, setLotusToken } = useContext(Context);
   const [messageDetails, setMessageDetails] = useState({});
   const { lotusToken } = state;
   useEffect(() => {     
-    window.ipcRenderer.on("received-token", (event, message) => {
+    ipcRenderer.on("received-token", (event, message) => {
       setLotusToken(message);    
     });
   }, []);

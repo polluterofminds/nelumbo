@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
@@ -7,18 +8,21 @@ const {
   getCurrentLotusVersion,
   installDependencies,
   startWorkers,
-  startMiner, 
-  checkLotusState, 
-  upgradeLotus, 
-  stopLotus, 
+  startMiner,
+  checkLotusState,
+  upgradeLotus,
+  stopLotus,
   getLotusToken,
   createWallets,
   updateConfig,
-  startIPFS
+  startIPFS,
 } = require("./cli");
 const isOnline = require("is-online");
-const { electron } = require("process");
-
+const { ExceptionlessClient } = require("exceptionless");
+const client = ExceptionlessClient.default;
+client.config.apiKey = "XUlBBdgFxAlmCsAZHDFTIacXpzYuZDuqDzzFYMlR";
+const fixPath = require("fix-path");
+fixPath();
 let mainWindow;
 let electronState;
 let lotusConfig;
@@ -29,10 +33,13 @@ try {
 
 const startLotus = async (existingRepo, config) => {
   try {
-    if(config) {
-      mainWindow.webContents.send("launch-updates", "Updating lotus configuration...");
+    if (config) {
+      mainWindow.webContents.send(
+        "launch-updates",
+        "Updating lotus configuration..."
+      );
       await updateConfig(config);
-    }    
+    }
     mainWindow.webContents.send("launch-updates", "Starting workers...");
     await startWorkers(existingRepo);
     mainWindow.webContents.send("launch-updates", "Starting miner...");
@@ -41,9 +48,10 @@ const startLotus = async (existingRepo, config) => {
     await createWallets();
     mainWindow.webContents.send("launch-updates", "Done");
   } catch (error) {
+    client.submitException(error);
     throw error;
   }
-}
+};
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -58,45 +66,55 @@ const createWindow = () => {
   });
   const startURL = isDev
     ? "http://localhost:3000"
-    : `file://${path.join(__dirname, "../build/index.html")}`;
+    : `file://${path.join(__dirname, "/../build/index.html")}`;
 
   mainWindow.loadURL(startURL);
 
   mainWindow.once("ready-to-show", async () => {
-    mainWindow.show();
-    const online = await isOnline();
-    let lotusVersion;
-    let updateAvailable = false;
-    const missingDependencies = await checkOnDependencies();
     try {
-      lotusVersion = await getLocalLotusVersion();
-    } catch (error) {
-      console.log("No lotus installed");
-    }
-
-    if (online && lotusVersion) {
-      const remoteLotusVersions = await getCurrentLotusVersion();
-      const thisIndex = remoteLotusVersions.indexOf(lotusVersion);
-      if (thisIndex !== 0) {
-        //  We need to upgrade Lotus
-        updateAvailable = true;
+      mainWindow.show();
+      client.submitLog("Nelumbo Loaded");
+      const online = await isOnline();
+      let lotusVersion;
+      let updateAvailable = false;
+      let missingDependencies = [];
+      try {
+        missingDependencies = await checkOnDependencies();
+      } catch (error) {
+        client.submitException(error);
       }
+      try {
+        lotusVersion = await getLocalLotusVersion();
+      } catch (error) {
+        console.log("No lotus installed");
+      }
+
+      if (online && lotusVersion) {
+        const remoteLotusVersions = await getCurrentLotusVersion();
+        const thisIndex = remoteLotusVersions.indexOf(lotusVersion);
+        if (thisIndex !== 0) {
+          //  We need to upgrade Lotus
+          updateAvailable = true;
+        }
+      }
+
+      electronState = {
+        lotusVersion,
+        missingDependencies,
+        updateAvailable,
+      };
+
+      mainWindow.webContents.send(
+        "electron-state",
+        JSON.stringify(electronState)
+      );
+      mainWindow.on("closed", async () => {
+        await stopLotus();
+        mainWindow = null;
+      });
+    } catch (error) {
+      client.submitException(error);
     }
-
-    electronState = {
-      lotusVersion,
-      missingDependencies,
-      updateAvailable,
-    };
-
-    mainWindow.webContents.send(
-      "electron-state",
-      JSON.stringify(electronState)
-    );
-  });
-  mainWindow.on("closed", async () => {
-    await stopLotus();
-    mainWindow = null;    
   });
 };
 
@@ -107,7 +125,7 @@ ipcMain.on("Update Config", async (event, message) => {
 ipcMain.on("Start IPFS", async (event, message) => {
   await startIPFS();
   mainWindow.webContents.send("ipfs update", "ipfs running");
-})
+});
 
 ipcMain.on("launch", async (event, message) => {
   try {
@@ -121,46 +139,48 @@ ipcMain.on("launch", async (event, message) => {
         await installDependencies(missingDependencies);
       } catch (error) {
         console.log(error);
+        client.submitException(error);
         mainWindow.webContents.send("launch-updates", "Error while launching");
       }
     }
 
-    const existingLotusRepo = missingDependencies.filter((dep) => dep.reason === 'lotus').length === 0
+    const existingLotusRepo =
+      missingDependencies.filter((dep) => dep.reason === "lotus").length === 0;
     await startLotus(existingLotusRepo, lotusConfig);
   } catch (error) {
     console.log(error);
+    client.submitException(error);
     mainWindow.webContents.send("launch-updates", "Error");
   }
 });
 
-ipcMain.on('re-launch', async (event, message) => {
+ipcMain.on("re-launch", async (event, message) => {
   try {
     mainWindow.webContents.send("launch-updates", "Shutting down Lotus...");
     await stopLotus();
     await startLotus();
   } catch (error) {
     console.log(error);
+    client.submitException(error);
     mainWindow.webContents.send("launch-updates", "Error");
   }
 });
 
-ipcMain.on('Get state', async (event, message) => {
-  mainWindow.webContents.send(
-    "electron-state",
-    JSON.stringify(electronState)
-  );
-})
+ipcMain.on("Get state", async (event, message) => {
+  mainWindow.webContents.send("electron-state", JSON.stringify(electronState));
+});
 
-ipcMain.on('Check lotus', async (event, message) => {
+ipcMain.on("Check lotus", async (event, message) => {
   try {
     const state = await checkLotusState();
     mainWindow.webContents.send("Lotus state", state);
   } catch (error) {
+    client.submitException(error);
     console.log(error);
   }
 });
 
-ipcMain.on('Check dependencies', async (event, message) => {
+ipcMain.on("Check dependencies", async (event, message) => {
   try {
     const missingDependencies = await checkOnDependencies();
     electronState.missingDependencies = missingDependencies;
@@ -169,11 +189,12 @@ ipcMain.on('Check dependencies', async (event, message) => {
       JSON.stringify(electronState)
     );
   } catch (error) {
+    client.submitException(error);
     console.log(error);
   }
 });
 
-ipcMain.on('Upgrade lotus', async (event, message) => {
+ipcMain.on("Upgrade lotus", async (event, message) => {
   try {
     await upgradeLotus();
     mainWindow.webContents.send("Upgrade complete");
@@ -184,25 +205,24 @@ ipcMain.on('Upgrade lotus', async (event, message) => {
     );
   } catch (error) {
     console.log(error);
+    client.submitException(error);
     mainWindow.webContents.send("launch-updates", "Error");
   }
 });
 
 ipcMain.on("get-token", async (event, message) => {
   try {
-    console.log("getting the token")
+    console.log("getting the token");
     const token = await getLotusToken();
     console.log(token);
-    mainWindow.webContents.send(
-      "received-token",
-      token
-    ); 
+    mainWindow.webContents.send("received-token", token);
   } catch (error) {
+    client.submitException(error);
     console.log(error);
   }
-})
+});
 
-ipcMain.on('Open link', async (event, message) => {
+ipcMain.on("Open link", async (event, message) => {
   shell.openExternal(message);
-})
+});
 app.on("ready", createWindow);
