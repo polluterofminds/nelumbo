@@ -2,16 +2,17 @@
 
 Nelumbo is a one-click, development blockchain for Filecoin that you can run on your Mac. Rather than spending time with dependencies, version management, and command-line difficulties, you can launch a development version of the Filecoin Lotus blockchain. This let's you get to the important stuff faster—building.
 
+[Download Here]()
+
 ## Project Status  
 
-Nelumbo is under active development. Contributions are welcome. Please open issues, create pull requests, and reach out if you have questions. 
+Nelumbo is designed to make getting a local Filecoin devnet spun up easily, but it also provides some nice-to-have tools including: 
 
-The current state includes the following: 
+* A simple block explorer 
+* Wallet creation 
+* HTTP API documentation around key methods
 
-* UI that prompts Homebrew install  
-* UI to install and run Lotus  
-* UI to indicate Lotus is running  
-* UI to allow Lotus upgrades
+Should you find any issues with the application, please open issues in this repository. Pull requests are welcome. 
 
 ## Requirements  
 
@@ -20,6 +21,8 @@ While Nelumbo tries to abstract away all of the dependency installation requirem
 ##  Who is behind this project  
 
 Justin Hunter ([polluterofminds](https://polluterofminds.com)) is building this. He has been working on Filecoin storage client development since the early days of Testnet. This project solves a big problem for him, and it will surely solve a big problem for you if you're building storage client apps. 
+
+**Nelumbo uses [Exceptionless](https://exceptionless.com) to capture error information to help better support users of the app.**
 
 ##  Run it locally
 
