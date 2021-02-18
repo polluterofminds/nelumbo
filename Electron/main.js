@@ -20,7 +20,7 @@ const {
 const isOnline = require("is-online");
 const { ExceptionlessClient } = require("exceptionless");
 const client = ExceptionlessClient.default;
-client.config.apiKey = "XUlBBdgFxAlmCsAZHDFTIacXpzYuZDuqDzzFYMlR";
+client.config.apiKey = process.env.EXCEPTIONLESS_KEY
 const fixPath = require("fix-path");
 fixPath();
 let mainWindow;
